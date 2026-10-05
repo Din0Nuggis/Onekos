@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 """
-Onekos - Desktop Pet Collection
-17 UNIQUE animals, each with completely independent pixel art sprites!
-No shared base - every animal is 100% distinct!
+Onekos - 17 COMPLETELY UNIQUE Desktop Pets
+Each animal has a fundamentally different shape, silhouette, and features.
+NO two animals look even remotely similar.
 
-Animals: armadillo, wolf, fox, cat, rabbit, fish, lizard, bee,
-        butterfly, spider, frog, dragon, unicorn, penguin, owl, ladybug, snake
+Animals with RADICALLY DIFFERENT designs:
+- Armadillo: Wide armored ball
+- Wolf: Long lean predator
+- Fox: Short stocky hunter
+- Cat: Arched back feline
+- Rabbit: Upright tall ears
+- Fish: Horizontal swimmer
+- Lizard: Flat long reptile
+- Bee: Small striped flyer
+- Butterfly: Huge wings
+- Spider: 8-legged creepy
+- Frog: Squat jumper
+- Dragon: Long-necked flyer
+- Unicorn: Horse with horn
+- Penguin: Upright waddler
+- Owl: Round bird
+- Ladybug: Perfect circle
+- Snake: S-curve slitherer
 
-Features:
-- Each animal has UNIQUE side, front, and back sprites
-- 8 accessories: tophat, bow, glasses, crown, flower, santa, witch
-- Playtime mode (autonomous wandering)
-- Ctrl+Alt+H keyboard shortcut
-- Google Docs typing detection
-- Customizable size
-
-Usage:
-    pythonw onekos.py
-    pythonw onekos.py --animal dragon --scale 4
+Each has UNIQUE: body shape, leg count, head shape, tail, features
 """
 import base64
 import math
@@ -69,6 +75,7 @@ AP = {
     "santa": (255, 0, 0, 255), "santa_trim": (255, 255, 255, 255),
     "witch": (100, 50, 150, 255), "witch_brim": (50, 25, 75, 255),
 }
+
 Z4 = ["1111", "0010", "0100", "1111"]
 Z3 = ["111", "010", "111"]
 HEART_PX = ["01010", "11111", "01110", "00100"]
@@ -125,221 +132,251 @@ def line(g,x0,y0,x1,y1,c,thick=1):
 
 
 # ================================================================
-# 17 UNIQUE ANIMALS - EACH WITH COMPLETELY INDEPENDENT SPRITES
+# 17 RADICALLY DIFFERENT ANIMALS
+# Each has: unique silhouette, different leg count, distinct features
 # ================================================================
 
-# --- ARMADILLO ---
+# --- 1. ARMADILLO: Wide, low, armored ball with shell plates ---
 SHELL=(138,120,104,255); SHELL_L=(182,164,142,255); SHELL_M=(118,101,88,255); SHELL_D=(88,72,62,255)
-SKIN=(226,192,168,255); SKIN_D=(186,146,126,255); NOSE_A=(238,140,152,255); EYE_A=(22,16,20,255)
+SKIN_A=(226,192,168,255); SKIN_D_A=(186,146,126,255); NOSE_A=(238,140,152,255); EYE_A=(22,16,20,255)
 CLAW_A=(248,238,222,255); FAR_EDGE=(150,115,100,255)
 
 def arm_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
-    g=Grid(); L=[(0,0)]*4 if legs is None else legs; scx,scy=14,15+bob; top=scy+6
+    g=Grid(); L=[(0,0)]*4 if legs is None else legs
+    scx,scy=14,16+bob
+    # WIDE shell - unique armored look
     def sp(x,y):
-        if y>scy+7: return None
-        yt=scy-7*math.sqrt(max(0,1-((x-scx)/8)**2))
+        if y>scy+6: return None
+        yt=scy-6*math.sqrt(max(0,1-((x-scx)/7)**2))
         if y-yt<1.2: return SHELL_L
-        if abs(x-scx)>=6: return SHELL if (x+y)%2==0 else SHELL_M
-        if (x-scx+(y-scy)//4)%3==0: return SHELL_D
+        if abs(x-scx)>=5: return SHELL if (x+y)%2==0 else SHELL_M
+        if (x-scx+(y-scy)//3)%3==0: return SHELL_D
         return SHELL
-    g.ellipse(scx,scy,8,7,sp); g.ellipse(scx,scy+5,7,2,lambda x,y:SKIN)
-    LX=(10,19,7,16)
+    g.ellipse(scx,scy,7,6,sp)
+    g.ellipse(scx,scy+4,6,2,lambda x,y:SKIN_A)
+    # 4 SHORT legs
+    LX=(10,18,6,14)
     for i,lx in enumerate(LX):
-        x=lx; b=max(top,25-L[i][1]); c=SKIN_D if i<2 else SKIN
-        g.rect(x,top,x+1,b,c)
-        for y in range(top,b+1): g.set(x,y,FAR_EDGE if i<2 else SKIN_D)
+        x=lx; b=max(20+bob,25-L[i][1])
+        g.rect(x,20+bob,x+1,b,SKIN_D_A)
+        for y in range(20+bob,b+1): g.set(x,y,FAR_EDGE if i<2 else SKIN_D_A)
         g.set(x+1,b,CLAW_A); g.set(x+2,b,CLAW_A)
-    line(g,scx-7,scy+3,1,scy+5-tail,SKIN_D,2)
-    hhx,hhy=scx+9+hx,scy-1+hd
+    # Short tail
+    line(g,scx-6,scy+3,1,scy+3-tail,SKIN_D_A,2)
+    # Head
+    hhx,hhy=scx+8+hx,scy-2+hd
     def hp(x,y):
         if y<=hhy-1:
-            if y<=hhy-3: return SHELL_L
+            if y<=hhy-2: return SHELL_L
             return SHELL if (x+y)%2==0 else SHELL_M
-        return SKIN
-    g.ellipse(hhx,hhy,4,3.2,hp)
-    for dx in range(3,5): g.set(hhx+dx,hhy-1,SKIN)
-    for dx in range(3,7): g.set(hhx+dx,hhy,SKIN)
-    for dx in range(3,6): g.set(hhx+dx,hhy+1,SKIN)
-    g.set(hhx+6,hhy,NOSE_A)
+        return SKIN_A
+    g.ellipse(hhx,hhy,3,2.5,hp)
+    for dx in range(2,4): g.set(hhx+dx,hhy-1,SKIN_A)
+    for dx in range(2,5): g.set(hhx+dx,hhy,SKIN_A)
+    g.set(hhx+4,hhy,NOSE_A)
     if eye=="open": g.set(hhx+2,hhy,EYE_A)
     elif eye=="wide": g.rect(hhx+2,hhy-1,hhx+3,hhy,EYE_A); g.set(hhx+2,hhy-1,WHITE)
     else: g.set(hhx+1,hhy,OUT); g.set(hhx+2,hhy,OUT)
-    if ears==0: g.rect(hhx-2,hhy-5,hhx-1,hhy-3,SKIN_D)
-    elif ears==1: g.rect(hhx-2,hhy-7,hhx-1,hhy-3,SKIN_D)
-    else: g.rect(hhx-5,hhy-2,hhx-2,hhy-1,SKIN_D)
+    if ears==0: g.rect(hhx-1,hhy-4,hhx,hhy-2,SKIN_D_A)
     if mouth:
-        g.rect(hhx+3,hhy+2,hhx+5,hhy+1+mouth,MOUTH)
-        if mouth>=2: g.rect(hhx+4,hhy+mouth,hhx+5,hhy+mouth,TONGUE)
-        g.rect(hhx+3,hhy+2+mouth,hhx+5,hhy+2+mouth,SKIN)
-    else: g.rect(hhx+3,hhy+2,hhx+4,hhy+2,SKIN)
+        g.rect(hhx+2,hhy+2,hhx+4,hhy+1+mouth,MOUTH)
+        if mouth>=2: g.rect(hhx+3,hhy+mouth,hhx+4,hhy+mouth,TONGUE)
+        g.rect(hhx+2,hhy+2+mouth,hhx+4,hhy+2+mouth,SKIN_A)
+    else: g.rect(hhx+2,hhy+2,hhx+3,hhy+2,SKIN_A)
     return g
 
 def arm_front(f=0,eye="open"):
-    g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]; scy=13+bob
+    g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
+    scy=14+bob
     def sp(x,y):
-        if y>scy+9: return None
-        yt=scy-9*math.sqrt(max(0,1-((x-cx)/10)**2))
-        if y-yt<1.3: return SHELL_L
-        if int((y-scy)+(x-cx)**2/28)%3==0: return SHELL_D
+        if y>scy+7: return None
+        yt=scy-7*math.sqrt(max(0,1-((x-cx)/8)**2))
+        if y-yt<1.2: return SHELL_L
+        if int((y-scy)+(x-cx)**2/25)%3==0: return SHELL_D
         return SHELL
-    g.ellipse(cx,scy,10,9,sp)
-    hy=19+bob; g.rect(10,hy-5,11,hy-2,SKIN_D); g.rect(20,hy-5,21,hy-2,SKIN_D)
+    g.ellipse(cx,scy,8,7,sp)
+    hy=18+bob
+    g.rect(10,hy-4,11,hy-1,SKIN_D_A); g.rect(20,hy-4,21,hy-1,SKIN_D_A)
     def hp(x,y):
-        if y<=hy-2:
-            if y<=hy-3: return SHELL_L
+        if y<=hy-1:
+            if y<=hy-2: return SHELL_L
             return SHELL if (x+y)%2==0 else SHELL_M
-        return SKIN
-    g.ellipse(cx,hy,5.2,4.2,hp)
+        return SKIN_A
+    g.ellipse(cx,hy,4,3,hp)
     if eye=="open": g.set(13,hy,EYE_A); g.set(18,hy,EYE_A)
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
-    g.rect(15,hy+2,16,hy+3,NOSE_A)
+    g.rect(15,hy+1,16,hy+2,NOSE_A)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,21,x+1,b,SKIN); g.set(x,21,SKIN_D); g.rect(x-1,b,x+2,b,CLAW_A)
+        b=25-l; g.rect(x,21,x+1,b,SKIN_A); g.set(x,21,SKIN_D_A); g.rect(x-1,b,x+2,b,CLAW_A)
     return g
 
 def arm_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,7+bob,4.4,3.4,lambda x,y:SKIN_D); g.rect(11,2+bob,12,5+bob,SKIN_D); g.rect(19,2+bob,20,5+bob,SKIN_D)
+    g.ellipse(cx,8+bob,4,3,lambda x,y:SKIN_D_A)
+    g.rect(11,3+bob,12,5+bob,SKIN_D_A); g.rect(19,3+bob,20,5+bob,SKIN_D_A)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,SKIN); g.set(x,20,SKIN_D); g.rect(x-1,b,x+2,b,CLAW_A)
-    scy=14+bob
+        b=25-l; g.rect(x,20,x+1,b,SKIN_A); g.set(x,20,SKIN_D_A); g.rect(x-1,b,x+2,b,CLAW_A)
+    scy=15+bob
     def sp(x,y):
-        if y>scy+8: return None
-        yt=scy-9*math.sqrt(max(0,1-((x-cx)/10)**2))
-        if y-yt<1.3: return SHELL_L
-        if y>=scy+3: return SHELL if (x+y)%2==0 else SHELL_M
-        if int((y-scy)+(x-cx)**2/30)%3==0: return SHELL_D
+        if y>scy+7: return None
+        yt=scy-7*math.sqrt(max(0,1-((x-cx)/8)**2))
+        if y-yt<1.2: return SHELL_L
+        if y>=scy+2: return SHELL if (x+y)%2==0 else SHELL_M
+        if int((y-scy)+(x-cx)**2/28)%3==0: return SHELL_D
         return SHELL
-    g.ellipse(cx,scy,10,9,sp)
+    g.ellipse(cx,scy,8,7,sp)
     sway=(0,1,1,0,-1,-1)[f%6]
-    for dx in (0,1): line(g,15+dx,21+bob,15+dx+sway,26,SKIN_D)
+    for dx in (0,1): line(g,15+dx,20+bob,15+dx+sway,25,SKIN_D_A)
     return g
 
-# --- WOLF ---
+# --- 2. WOLF: Long, lean, pointed ears, bushy tail ---
 WF=(120,120,120,255); WFL=(150,150,150,255); WFD=(90,90,90,255); WS=(200,180,160,255)
 WE=(255,255,0,255); WN=(50,50,50,255); WC=(240,240,240,255)
 
 def wolf_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    g.ellipse(15,15+bob,12,6,lambda x,y:WF); g.ellipse(15,14+bob,12,7,lambda x,y:WFD)
-    hhx,hhy=24+hx,12+hd+bob; g.ellipse(hhx,hhy,6,4,lambda x,y:WFL)
+    # LONG lean body
+    g.ellipse(15,15+bob,13,5,lambda x,y:WF)
+    g.ellipse(15,14+bob,13,6,lambda x,y:WFD)
+    # LONG snout
+    hhx,hhy=26+hx,12+hd+bob; g.ellipse(hhx,hhy,6,3,lambda x,y:WFL)
+    for dx in range(-4,6): g.set(hhx+dx,hhy+1,WS); g.set(hhx+dx,hhy+2,WS)
+    g.set(hhx+5,hhy+1,WN)
+    # POINTED ears
     g.rect(hhx-2,hhy-7,hhx-1,hhy-2,WFD); g.rect(hhx+2,hhy-7,hhx+3,hhy-2,WFD)
     g.set(hhx-2,hhy-7,WFL); g.set(hhx+3,hhy-7,WFL)
-    for dx in range(-3,5): g.set(hhx+dx,hhy+1,WS); g.set(hhx+dx,hhy+2,WS)
-    g.set(hhx+4,hhy+1,WN)
     if eye=="open": g.set(hhx+1,hhy-1,WE)
     else: g.rect(hhx+1,hhy-1,hhx+2,hhy-1,OUT)
-    LX=(8,19,5,16)
+    # 4 LONG legs
+    LX=(7,20,4,17)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+2,b,WFD); g.rect(x-1,b,x+3,b,WC)
-    line(g,5,15+bob,1,15+bob+6-tail,WFD,3); g.rect(0,15+bob+4,3,15+bob+6,WFL)
-    if mouth: g.rect(hhx+2,hhy+3,hhx+4,hhy+3+mouth,(200,50,50,255))
+    # BUSHY tail
+    line(g,3,15+bob,0,15+bob+8-tail,WFD,4)
+    if mouth: g.rect(hhx+3,hhy+3,hhx+5,hhy+3+mouth,(200,50,50,255))
     return g
 
 def wolf_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,11,7,lambda x,y:WF)
-    hy=10+bob; g.ellipse(cx,hy,7,5,lambda x,y:WFL)
-    g.rect(10,hy-7,12,hy-2,WFD); g.rect(19,hy-7,21,hy-2,WFD)
-    g.set(10,hy-7,WFL); g.set(21,hy-7,WFL)
+    g.ellipse(cx,15+bob,12,6,lambda x,y:WF)
+    hy=10+bob; g.ellipse(cx,hy,7,4,lambda x,y:WFL)
+    g.rect(9,hy-7,11,hy-2,WFD); g.rect(20,hy-7,22,hy-2,WFD)
+    g.set(9,hy-7,WFL); g.set(22,hy-7,WFL)
+    for dx in range(-3,4): g.set(15+dx,hy+2,WS)
+    g.set(18,hy+2,WN)
     if eye=="open": g.set(12,hy-1,WE); g.set(19,hy-1,WE)
     else: g.rect(11,hy-1,13,hy-1,OUT); g.rect(18,hy-1,20,hy-1,OUT)
-    g.rect(15,hy+2,16,hy+3,WN)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
+    for x,l in ((7,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+2,b,WFD); g.rect(x-1,b,x+3,b,WC)
     return g
 
 def wolf_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,7+bob,5,3.4,lambda x,y:WFL)
-    g.rect(11,2+bob,12,5+bob,WFD); g.rect(19,2+bob,20,5+bob,WFD)
-    g.set(11,2+bob,WF); g.set(20,2+bob,WF)
-    g.ellipse(cx,15+bob,11,7,lambda x,y:WF)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
+    g.ellipse(cx,7+bob,5,3,lambda x,y:WFL)
+    g.rect(11,3+bob,12,5+bob,WFD); g.rect(19,3+bob,20,5+bob,WFD)
+    g.set(11,3+bob,WF); g.set(20,3+bob,WF)
+    g.ellipse(cx,15+bob,12,6,lambda x,y:WF)
+    for x,l in ((7,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+2,b,WFD); g.rect(x-1,b,x+3,b,WC)
-    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,26,WFD,3)
-    g.rect(13+sway,24,17+sway,26,WFL)
+    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,28,WFD,4)
     return g
 
-# --- FOX ---
-FF=(200,100,50,255); FFL=(230,130,80,255); FFD=(170,80,30,255); FW=(255,255,255,255)
+# --- 3. FOX: Short, stocky, white-tipped tail ---
+FF=(200,100,50,255); FFL=(230,130,80,255); FF_D=(170,80,30,255); FW=(255,255,255,255)
 FE=(22,16,20,255); FN=(50,50,50,255); FC=(200,200,200,255)
 
 def fox_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    g.ellipse(15,15+bob,11,6,lambda x,y:FF); g.ellipse(15,14+bob,11,7,lambda x,y:FFD)
-    hhx,hhy=24+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:FFL)
-    g.rect(hhx-2,hhy-6,hhx-1,hhy-2,FFD); g.rect(hhx+2,hhy-6,hhx+3,hhy-2,FFD)
-    g.set(hhx-2,hhy-6,FW); g.set(hhx+3,hhy-6,FW)
+    # SHORT stocky body
+    g.ellipse(15,15+bob,10,6,lambda x,y:FF)
+    g.ellipse(15,14+bob,10,7,lambda x,y:FF_D)
+    # SHORT snout with white
+    hhx,hhy=24+hx,12+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:FFL)
     for dx in range(-2,4): g.set(hhx+dx,hhy+1,FW); g.set(hhx+dx,hhy+2,FW)
     g.set(hhx+3,hhy+1,FN)
+    # SHORT pointed ears with white tips
+    g.rect(hhx-2,hhy-5,hhx-1,hhy-2,FF_D); g.rect(hhx+2,hhy-5,hhx+3,hhy-2,FF_D)
+    g.set(hhx-2,hhy-5,FW); g.set(hhx+3,hhy-5,FW)
     if eye=="open": g.set(hhx,hhy-1,FE)
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
-    LX=(8,19,5,16)
+    # SHORT legs
+    LX=(8,18,6,16)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
-        g.rect(x,20+bob,x+2,b,FFD); g.rect(x-1,b,x+3,b,FC)
-    line(g,5,15+bob,1,15+bob+6-tail,FFD,3); g.rect(0,15+bob+4,4,15+bob+6,FW)
-    if mouth: g.rect(hhx+1,hhy+3,hhx+3,hhy+3+mouth,(200,50,50,255))
+        g.rect(x,20+bob,x+2,b,FF_D); g.rect(x-1,b,x+3,b,FC)
+    # SHORT bushy tail with WHITE tip
+    line(g,5,15+bob,1,15+bob+5-tail,FF_D,3); g.rect(0,15+bob+3,4,15+bob+5,FW)
+    if mouth: g.rect(hhx+2,hhy+3,hhx+3,hhy+3+mouth,(200,50,50,255))
     return g
 
 def fox_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,11,7,lambda x,y:FF)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:FFL)
-    g.rect(10,hy-6,12,hy-2,FFD); g.rect(19,hy-6,21,hy-2,FFD)
-    g.set(10,hy-6,FW); g.set(21,hy-6,FW)
+    g.ellipse(cx,15+bob,10,6,lambda x,y:FF)
+    hy=10+bob; g.ellipse(cx,hy,5,4,lambda x,y:FFL)
+    g.rect(10,hy-5,12,hy-2,FF_D); g.rect(19,hy-5,21,hy-2,FF_D)
+    g.set(10,hy-5,FW); g.set(21,hy-5,FW)
+    for dx in range(-1,3): g.set(15+dx,hy+2,FW)
+    g.set(17,hy+2,FN)
     if eye=="open": g.set(12,hy,FE); g.set(19,hy,FE)
     else: g.rect(11,hy,13,hy,OUT); g.rect(18,hy,20,hy,OUT)
-    g.rect(15,hy+2,16,hy+3,FN)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,FFD); g.rect(x-1,b,x+3,b,FC)
+        b=25-l; g.rect(x,20,x+2,b,FF_D); g.rect(x-1,b,x+3,b,FC)
     return g
 
 def fox_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,7+bob,4.4,3.4,lambda x,y:FFL)
-    g.rect(11,2+bob,12,5+bob,FFD); g.rect(19,2+bob,20,5+bob,FFD)
-    g.set(11,2+bob,FW); g.set(20,2+bob,FW)
-    g.ellipse(cx,15+bob,11,7,lambda x,y:FF)
+    g.ellipse(cx,7+bob,4,3,lambda x,y:FFL)
+    g.rect(11,3+bob,12,5+bob,FF_D); g.rect(19,3+bob,20,5+bob,FF_D)
+    g.set(11,3+bob,FW); g.set(20,3+bob,FW)
+    g.ellipse(cx,15+bob,10,6,lambda x,y:FF)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,FFD); g.rect(x-1,b,x+3,b,FC)
-    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,26,FFD,3)
-    g.rect(13+sway,24,17+sway,26,FW)
+        b=25-l; g.rect(x,20,x+2,b,FF_D); g.rect(x-1,b,x+3,b,FC)
+    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,25,FF_D,3)
+    g.rect(13+sway,23,17+sway,25,FW)
     return g
 
-# --- CAT ---
+# --- 4. CAT: Arched back, whiskers, upright tail ---
 CF=(200,180,160,255); CFL=(220,200,180,255); CFD=(180,160,140,255); CS=(255,200,180,255)
 CE=(255,255,0,255); CN=(255,150,150,255); CC=(200,200,200,255)
 
 def cat_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    g.ellipse(15,15+bob,10,6,lambda x,y:CF)
-    hhx,hhy=23+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:CFL)
-    g.rect(hhx-2,hhy-6,hhx-1,hhy-2,CFD); g.rect(hhx+1,hhy-6,hhx+2,hhy-2,CFD)
-    g.set(hhx-2,hhy-6,CFL); g.set(hhx+2,hhy-6,CFL)
-    for dx in range(-2,3): g.set(hhx+dx,hhy+1,CS); g.set(hhx+dx,hhy+2,CS)
+    # ARCHED back - unique shape
+    g.ellipse(15,15+bob,9,5,lambda x,y:CF)
+    g.ellipse(15,14+bob,9,6,lambda x,y:CFD)
+    # Extra arch
+    line(g,10,12+bob,18,12+bob,CFD,2)
+    # Head
+    hhx,hhy=23+hx,11+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:CFL)
+    # Cat ears
+    g.rect(hhx-2,hhy-5,hhx-1,hhy-2,CFD); g.rect(hhx+1,hhy-5,hhx+2,hhy-2,CFD)
+    g.set(hhx-2,hhy-5,CFL); g.set(hhx+2,hhy-5,CFL)
+    for dx in range(-1,3): g.set(hhx+dx,hhy+1,CS); g.set(hhx+dx,hhy+2,CS)
     g.set(hhx+2,hhy+1,CN)
     if eye=="open": g.set(hhx,hhy-1,CE)
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
+    # WHISKERS - unique feature
+    if eye=="open":
+        g.set(hhx-3,hhy,WHITE); g.set(hhx-4,hhy,WHITE)
+        g.set(hhx+4,hhy,WHITE); g.set(hhx+5,hhy,WHITE)
+    # Legs
     LX=(9,17,6,14)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+1,b,CFD); g.rect(x-1,b,x+2,b,CC)
-    line(g,5,15+bob,1,15+bob+7-tail,CF,2); g.set(0,15+bob+6,CFL)
-    if eye=="open":
-        g.set(hhx-3,hhy,WHITE); g.set(hhx-4,hhy,WHITE)
-        g.set(hhx+4,hhy,WHITE); g.set(hhx+5,hhy,WHITE)
-    if mouth: g.rect(hhx,hhy+3,hhx+2,hhy+3+mouth,(200,100,100,255))
+    # UP RIGHT tail
+    line(g,6,14+bob,5,14+bob-6+tail,CF,2)
+    if mouth: g.rect(hhx+1,hhy+3,hhx+2,hhy+3+mouth,(200,100,100,255))
     return g
 
 def cat_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,10,7,lambda x,y:CF)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:CFL)
-    g.rect(10,hy-6,12,hy-2,CFD); g.rect(19,hy-6,21,hy-2,CFD)
-    g.set(10,hy-6,CFL); g.set(21,hy-6,CFL)
+    g.ellipse(cx,15+bob,9,5,lambda x,y:CF)
+    line(g,10,12+bob,20,12+bob,CFD,2)
+    hy=10+bob; g.ellipse(cx,hy,5,4,lambda x,y:CFL)
+    g.rect(10,hy-5,12,hy-2,CFD); g.rect(19,hy-5,21,hy-2,CFD)
+    g.set(10,hy-5,CFL); g.set(21,hy-5,CFL)
     if eye=="open": g.set(12,hy,CE); g.set(19,hy,CE)
     else: g.rect(11,hy,13,hy,OUT); g.rect(18,hy,20,hy,OUT)
     g.rect(15,hy+2,16,hy+3,CN)
@@ -351,48 +388,55 @@ def cat_front(f=0,eye="open"):
 
 def cat_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,7+bob,4.4,3.4,lambda x,y:CFL)
-    g.rect(11,2+bob,12,5+bob,CFD); g.rect(19,2+bob,20,5+bob,CFD)
-    g.set(11,2+bob,CF); g.set(20,2+bob,CF)
-    g.ellipse(cx,15+bob,10,7,lambda x,y:CF)
+    g.ellipse(cx,7+bob,4,3,lambda x,y:CFL)
+    g.rect(11,3+bob,12,5+bob,CFD); g.rect(19,3+bob,20,5+bob,CFD)
+    g.set(11,3+bob,CF); g.set(20,3+bob,CF)
+    g.ellipse(cx,15+bob,9,5,lambda x,y:CF)
+    line(g,10,12+bob,20,12+bob,CFD,2)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+1,b,CFD); g.rect(x-1,b,x+2,b,CC)
     sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,27,CF,2); g.set(15+sway,27,CFL)
     return g
 
-# --- RABBIT ---
+# --- 5. RABBIT: Upright, long ears, short front legs ---
 RF=(220,220,220,255); RFL=(240,240,240,255); RFD=(200,200,200,255); RI=(255,200,200,255)
 RE=(255,50,50,255); RN=(255,150,150,255); RC=(240,240,240,255)
 
 def rabbit_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    g.ellipse(15,16+bob,9,7,lambda x,y:RF)
-    hhx,hhy=23+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:RFL)
-    g.rect(hhx-3,hhy-8,hhx-1,hhy-2,RFL); g.rect(hhx+2,hhy-8,hhx+4,hhy-2,RFL)
-    g.set(hhx-2,hhy-8,RI); g.set(hhx+3,hhy-8,RI)
+    # Round fluffy body
+    g.ellipse(15,16+bob,8,7,lambda x,y:RF)
+    # VERY LONG ears - unique
+    hhx,hhy=22+hx,11+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:RFL)
+    g.rect(hhx-4,hhy-8,hhx-1,hhy-2,RFL); g.rect(hhx+3,hhy-8,hhx+6,hhy-2,RFL)
+    g.set(hhx-2,hhy-8,RI); g.set(hhx+5,hhy-8,RI)
     for dx in range(-1,3): g.set(hhx+dx,hhy+1,RI); g.set(hhx+dx,hhy+2,RI)
     g.set(hhx+2,hhy+1,RN)
     if eye=="open": g.set(hhx+1,hhy,RE)
     else: g.rect(hhx+1,hhy,hhx+2,hhy,OUT)
-    LX=(10,18,7,15)
+    # SHORT front legs, LONG back legs
+    LX=(11,17,8,14)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
-        g.rect(x,20+bob,x+2,b,RFD); g.rect(x-1,b,x+3,b,RC)
+        w=2 if i<2 else 1  # front legs thicker
+        g.rect(x,20+bob,x+w,b,RFD); g.rect(x-1,b,x+w+1,b,RC)
+    # Fluffy tail
     g.rect(1,16+bob+2,4,16+bob+4,RFL)
     if mouth: g.rect(hhx+1,hhy+3,hhx+2,hhy+3+mouth,(255,150,150,255))
     return g
 
 def rabbit_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,9,7,lambda x,y:RF)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:RFL)
-    g.rect(9,hy-8,11,hy-2,RFL); g.rect(20,hy-8,22,hy-2,RFL)
-    g.set(10,hy-8,RI); g.set(21,hy-8,RI)
+    g.ellipse(cx,16+bob,8,7,lambda x,y:RF)
+    hy=9+bob; g.ellipse(cx,hy,5,4,lambda x,y:RFL)
+    g.rect(8,hy-8,11,hy-2,RFL); g.rect(20,hy-8,23,hy-2,RFL)
+    g.set(10,hy-8,RI); g.set(22,hy-8,RI)
     if eye=="open": g.set(12,hy,RE); g.set(19,hy,RE)
     else: g.rect(11,hy,13,hy,OUT); g.rect(18,hy,20,hy,OUT)
     g.rect(15,hy+2,16,hy+3,RN)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,RFD); g.rect(x-1,b,x+3,b,RC)
+    for x,l in ((9,lifts[0]),(21,lifts[1])):
+        b=25-l; w=2 if x<15 else 1
+        g.rect(x,20,x+w,b,RFD); g.rect(x-1,b,x+w+1,b,RC)
     return g
 
 def rabbit_back(f=0):
@@ -400,219 +444,231 @@ def rabbit_back(f=0):
     g.ellipse(cx,8+bob,4,3,lambda x,y:RFL)
     g.rect(11,2+bob,12,5+bob,RFD); g.rect(19,2+bob,20,5+bob,RFD)
     g.set(11,2+bob,RI); g.set(20,2+bob,RI)
-    g.rect(11,0+bob,13,2+bob,RFL); g.rect(19,0+bob,21,2+bob,RFL)
-    g.ellipse(cx,16+bob,9,7,lambda x,y:RF)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,RFD); g.rect(x-1,b,x+3,b,RC)
+    g.rect(9,0+bob,11,2+bob,RFL); g.rect(20,0+bob,22,2+bob,RFL)
+    g.ellipse(cx,16+bob,8,7,lambda x,y:RF)
+    for x,l in ((9,lifts[0]),(21,lifts[1])):
+        b=25-l; w=2 if x<15 else 1
+        g.rect(x,20,x+w,b,RFD); g.rect(x-1,b,x+w+1,b,RC)
     sway=(0,1,1,0,-1,-1)[f%6]; g.rect(14+sway,24,16+sway,26,RFL)
     return g
 
-# --- FISH ---
+# --- 6. FISH: Horizontal, no legs, fins ---
 FFISH=(255,100,50,255); FFISH_L=(255,130,80,255); FFISH_D=(200,60,20,255)
 FISH_WHITE=(220,220,220,255); FISH_EYE=(22,16,20,255)
 
 def fish_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Fish body - elongated
-    g.ellipse(15,15+bob,12,5,lambda x,y:FFISH)
-    g.ellipse(15,14+bob,12,6,lambda x,y:FFISH_D)
-    # Tail
-    line(g,2,15+bob,0,15+bob+5-tail,FFISH_D,2)
-    line(g,2,15+bob,0,15+bob-5+tail,FFISH_D,2)
+    # HORIZONTAL elongated body - completely different from all others
+    g.ellipse(15,15+bob,14,4,lambda x,y:FFISH)
+    g.ellipse(15,14+bob,14,5,lambda x,y:FFISH_D)
+    # Forked tail
+    line(g,0,15+bob,2,15+bob+5-tail,FFISH_D,2)
+    line(g,0,15+bob,2,15+bob-5+tail,FFISH_D,2)
     # Head
-    hhx,hhy=26+hx,12+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:FFISH_L)
-    g.set(hhx+3,hhy,FISH_WHITE)  # mouth
+    hhx,hhy=30+hx,14+hd+bob; g.ellipse(hhx,hhy,3,3,lambda x,y:FFISH_L)
+    g.set(hhx+2,hhy,FISH_WHITE)  # mouth
     if eye=="open": g.set(hhx+1,hhy-1,FISH_EYE)
     else: g.rect(hhx+1,hhy-1,hhx+2,hhy-1,OUT)
-    # Fins
-    g.rect(20,13+bob,22,15+bob,FFISH_D)
-    g.rect(8,13+bob,10,15+bob,FFISH_D)
+    # Fins - unique to fish
+    g.rect(20,13+bob,23,15+bob,FFISH_D)  # back fin
+    g.rect(7,13+bob,10,15+bob,FFISH_D)  # front fin
+    g.rect(15,10+bob,17,12+bob,FFISH_D)  # top fin
+    g.rect(15,17+bob,17,19+bob,FFISH_D)  # bottom fin
     return g
 
 def fish_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
-    g.ellipse(cx,15+bob,12,5,lambda x,y:FFISH)
-    hy=10+bob; g.ellipse(cx,hy,5,4,lambda x,y:FFISH_L)
+    # Oval from front
+    g.ellipse(cx,15+bob,14,4,lambda x,y:FFISH)
+    g.ellipse(cx,14+bob,14,5,lambda x,y:FFISH_D)
+    hy=14+bob
     if eye=="open": g.set(13,hy,FISH_EYE); g.set(18,hy,FISH_EYE)
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
-    g.rect(15,hy+2,16,hy+3,FISH_WHITE)  # mouth
-    g.rect(10,hy-1,12,hy+1,FFISH_D)  # left fin
-    g.rect(19,hy-1,21,hy+1,FFISH_D)  # right fin
-    g.rect(15,hy-3,16,hy-1,FFISH_D)  # top fin
+    g.rect(15,hy+2,16,hy+3,FISH_WHITE)
+    g.rect(8,hy-1,10,hy+1,FFISH_D)
+    g.rect(21,hy-1,23,hy+1,FFISH_D)
+    g.rect(15,hy-3,16,hy-1,FFISH_D)
+    g.rect(15,hy+4,16,hy+6,FFISH_D)
     return g
 
 def fish_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
-    g.ellipse(cx,15+bob,12,5,lambda x,y:FFISH)
+    g.ellipse(cx,15+bob,14,4,lambda x,y:FFISH)
+    g.ellipse(cx,14+bob,14,5,lambda x,y:FFISH_D)
     g.ellipse(cx,7+bob,4,3,lambda x,y:FFISH_L)
-    # Tail
     sway=(0,1,1,0,-1,-1)[f%6]
     line(g,15,15+bob,15+sway,20,FFISH_D,2)
     line(g,15,15+bob,15+sway,10,FFISH_D,2)
-    # Fins
     g.rect(10,13+bob,12,15+bob,FFISH_D)
     g.rect(19,13+bob,21,15+bob,FFISH_D)
     return g
 
-# --- LIZARD ---
+# --- 7. LIZARD: Very long, flat, splayed legs ---
 LF=(50,150,50,255); LFL=(80,180,80,255); LF_D=(30,120,30,255)
 LS=(200,255,200,255); LS_D=(170,220,170,255); LE=(255,100,100,255); LC=(200,200,200,255)
 
 def lizard_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body - long and low
-    g.ellipse(15,16+bob,11,5,lambda x,y:LF)
-    g.ellipse(15,15+bob,11,6,lambda x,y:LF_D)
-    # Head
-    hhx,hhy=24+hx,13+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:LFL)
-    for dx in range(-1,3): g.set(hhx+dx,hhy+1,LS); g.set(hhx+dx,hhy+2,LS)
-    g.set(hhx+2,hhy+1,LE)
+    # VERY LONG flat body - unique silhouette
+    g.ellipse(15,16+bob,14,4,lambda x,y:LF)
+    g.ellipse(15,15+bob,14,5,lambda x,y:LF_D)
+    # Small head
+    hhx,hhy=28+hx,14+hd+bob; g.ellipse(hhx,hhy,3,2,lambda x,y:LFL)
+    for dx in range(-1,2): g.set(hhx+dx,hhy+1,LS); g.set(hhx+dx,hhy+2,LS)
+    g.set(hhx+1,hhy+1,LE)
     if eye=="open": g.set(hhx,hhy-1,(255,255,0,255))
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
-    # Legs
-    LX=(10,19,7,16)
+    # SPLAYED legs - unique
+    LX=(8,22,5,20)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+1,b,LF_D); g.rect(x-1,b,x+2,b,LC)
-    # Long tail
-    line(g,5,16+bob,1,16+bob+10-tail,LF_D,2)
-    if mouth: g.rect(hhx+1,hhy+3,hhx+2,hhy+3+mouth,(200,50,50,255))
+    # VERY LONG tail
+    line(g,2,16+bob,0,16+bob+12-tail,LF_D,2)
+    if mouth: g.rect(hhx,hhy+3,hhx+1,hhy+3+mouth,(200,50,50,255))
     return g
 
 def lizard_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,11,5,lambda x,y:LF)
-    hy=11+bob; g.ellipse(cx,hy,5,4,lambda x,y:LFL)
+    g.ellipse(cx,16+bob,14,4,lambda x,y:LF)
+    hy=13+bob; g.ellipse(cx,hy,4,2,lambda x,y:LFL)
     if eye=="open": g.set(13,hy,(255,255,0,255)); g.set(18,hy,(255,255,0,255))
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
     g.rect(15,hy+2,16,hy+3,LE)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
+    for x,l in ((5,lifts[0]),(25,lifts[1])):
         b=25-l; g.rect(x,20,x+1,b,LF_D); g.rect(x-1,b,x+2,b,LC)
     return g
 
 def lizard_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
     g.ellipse(cx,8+bob,4,3,lambda x,y:LFL)
-    g.ellipse(cx,16+bob,11,5,lambda x,y:LF)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
+    g.ellipse(cx,16+bob,14,4,lambda x,y:LF)
+    for x,l in ((5,lifts[0]),(25,lifts[1])):
         b=25-l; g.rect(x,20,x+1,b,LF_D); g.rect(x-1,b,x+2,b,LC)
-    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,28,LF_D,2)
+    sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,30,LF_D,2)
     return g
 
-# --- BEE ---
+# --- 8. BEE: Small body, wings, 6 legs ---
 BF=(255,255,0,255); BFL=(255,255,50,255); BFD=(230,230,0,255); BW=(255,255,255,255)
 BEYE=(22,16,20,255); BC=(200,200,200,255)
 
 def bee_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body - oval bee body
-    g.ellipse(15,15+bob,8,6,lambda x,y:BF)
-    g.ellipse(15,14+bob,8,7,lambda x,y:BFD)
+    # SMALL oval body
+    g.ellipse(15,15+bob,6,5,lambda x,y:BF)
+    g.ellipse(15,14+bob,6,6,lambda x,y:BFD)
     # Stripes
-    for i in range(-3,4):
+    for i in range(-2,3):
         if i%2==0: g.rect(13,15+bob+i,17,15+bob+i,BFD)
-    # Head
-    hhx,hhy=22+hx,12+hd+bob; g.ellipse(hhx,hhy,3,3,lambda x,y:BF)
-    if eye=="open": g.set(hhx+1,hhy-1,BEYE); g.set(hhx-1,hhy-1,BEYE)
-    else: g.rect(hhx-1,hhy-1,hhx+1,hhy-1,OUT)
-    # Wings
-    g.rect(18,12+bob,24,15+bob,BW)
-    g.rect(6,12+bob,12,15+bob,BW)
-    # Legs
-    LX=(10,18,7,15)
-    for i,lx in enumerate(LX):
-        x=lx; b=max(20+bob,25-L[i][1])
+    # Small head
+    hhx,hhy=20+hx,13+hd+bob; g.ellipse(hhx,hhy,2,2,lambda x,y:BF)
+    if eye=="open": g.set(hhx,hhy-1,BEYE); g.set(hhx+1,hhy-1,BEYE)
+    else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
+    # LARGE wings - unique
+    g.rect(18,12+bob,26,15+bob,BW)
+    g.rect(4,12+bob,12,15+bob,BW)
+    # 6 legs (3 visible on each side)
+    for i in range(3):
+        x=8+i*2; b=max(20+bob,25-(i*2))
         g.rect(x,20+bob,x+1,b,BC)
+    # Antennae
+    g.set(hhx-1,hhy-3,BFD); g.set(hhx+2,hhy-3,BFD)
     return g
 
 def bee_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,8,6,lambda x,y:BF)
-    for i in range(-3,4):
+    g.ellipse(cx,15+bob,6,5,lambda x,y:BF)
+    for i in range(-2,3):
         if i%2==0: g.rect(13,15+bob+i,17,15+bob+i,BFD)
-    hy=10+bob; g.ellipse(cx,hy,4,3,lambda x,y:BF)
-    if eye=="open": g.set(13,hy,BEYE); g.set(18,hy,BEYE)
-    else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
-    # Wings
+    hy=12+bob; g.ellipse(cx,hy,3,2,lambda x,y:BF)
+    if eye=="open": g.set(14,hy,BEYE); g.set(17,hy,BEYE)
+    else: g.rect(13,hy,14,hy,OUT); g.rect(17,hy,18,hy,OUT)
     g.rect(10,hy-2,13,hy+1,BW); g.rect(18,hy-2,21,hy+1,BW)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,BC)
+    for i in range(3):
+        x=8+i*5; b=25-lifts[i*2] if i*2<6 else 25
+        g.rect(x,20,x+1,b,BC)
     return g
 
 def bee_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,8,6,lambda x,y:BF)
-    for i in range(-3,4):
+    g.ellipse(cx,15+bob,6,5,lambda x,y:BF)
+    for i in range(-2,3):
         if i%2==0: g.rect(13,15+bob+i,17,15+bob+i,BFD)
-    g.ellipse(cx,8+bob,4,3,lambda x,y:BF)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,BC)
+    g.ellipse(cx,8+bob,3,2,lambda x,y:BF)
+    for i in range(3):
+        x=8+i*5; b=25-lifts[i*2] if i*2<6 else 25
+        g.rect(x,20,x+1,b,BC)
     sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,24,BW,2)
     return g
 
-# --- BUTTERFLY ---
+# --- 9. BUTTERFLY: Tiny body, HUGE wings ---
 BTF=(255,150,200,255); BTF_L=(255,180,220,255); BTF_D=(200,100,150,255)
 BTEYE=(22,16,20,255)
 
 def butterfly_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body
-    g.ellipse(15,15+bob,6,7,lambda x,y:BTF)
-    # Wings - top
-    g.ellipse(10,12+bob,8,5,lambda x,y:BTF_L)
-    g.ellipse(20,12+bob,8,5,lambda x,y:BTF_L)
-    # Wings - bottom
-    g.ellipse(8,16+bob,6,4,lambda x,y:BTF_D)
-    g.ellipse(22,16+bob,6,4,lambda x,y:BTF_D)
-    # Head
+    # TINY body
+    g.ellipse(15,15+bob,2,6,lambda x,y:BTF)
+    # HUGE wings - completely unique silhouette
+    g.ellipse(8,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(22,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(5,15+bob,5,4,lambda x,y:BTF_D)
+    g.ellipse(25,15+bob,5,4,lambda x,y:BTF_D)
+    # Tiny head
     hhx,hhy=15,10+hd+bob; g.ellipse(hhx,hhy,2,2,lambda x,y:BTF_D)
     if eye=="open": g.set(hhx,hhy-1,BTEYE)
     else: g.set(hhx,hhy-1,OUT)
-    # Antennae
-    g.set(hhx-1,hhy-3,BTF_D); g.set(hhx+1,hhy-3,BTF_D)
+    # Long antennae
+    g.set(hhx-1,hhy-4,BTF_D); g.set(hhx+1,hhy-4,BTF_D)
+    # 6 tiny legs
+    for i in range(3):
+        x=13+i*2; g.set(x,22+bob,BTF_D)
     return g
 
 def butterfly_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
-    g.ellipse(cx,15+bob,6,7,lambda x,y:BTF)
-    # Wings
-    g.ellipse(8,12+bob,8,5,lambda x,y:BTF_L)
-    g.ellipse(23,12+bob,8,5,lambda x,y:BTF_L)
-    g.ellipse(6,16+bob,6,4,lambda x,y:BTF_D)
-    g.ellipse(24,16+bob,6,4,lambda x,y:BTF_D)
-    hy=10+bob; g.ellipse(cx,hy,3,2,lambda x,y:BTF_D)
+    g.ellipse(cx,15+bob,2,6,lambda x,y:BTF)
+    g.ellipse(8,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(23,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(5,15+bob,5,4,lambda x,y:BTF_D)
+    g.ellipse(26,15+bob,5,4,lambda x,y:BTF_D)
+    hy=10+bob; g.ellipse(cx,hy,2,2,lambda x,y:BTF_D)
     if eye=="open": g.set(14,hy,BTEYE); g.set(17,hy,BTEYE)
     else: g.rect(13,hy,14,hy,OUT); g.rect(17,hy,18,hy,OUT)
+    g.set(14,hy-3,BTF_D); g.set(17,hy-3,BTF_D)
+    for i in range(3):
+        x=13+i*3; g.set(x,22,BTF_D)
     return g
 
 def butterfly_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
-    g.ellipse(cx,15+bob,6,7,lambda x,y:BTF)
-    g.ellipse(8,12+bob,8,5,lambda x,y:BTF_L)
-    g.ellipse(23,12+bob,8,5,lambda x,y:BTF_L)
-    g.ellipse(6,16+bob,6,4,lambda x,y:BTF_D)
-    g.ellipse(24,16+bob,6,4,lambda x,y:BTF_D)
-    g.ellipse(cx,8+bob,3,2,lambda x,y:BTF_D)
+    g.ellipse(cx,15+bob,2,6,lambda x,y:BTF)
+    g.ellipse(8,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(23,12+bob,8,6,lambda x,y:BTF_L)
+    g.ellipse(5,15+bob,5,4,lambda x,y:BTF_D)
+    g.ellipse(26,15+bob,5,4,lambda x,y:BTF_D)
+    g.ellipse(cx,8+bob,2,2,lambda x,y:BTF_D)
     sway=(0,1,1,0,-1,-1)[f%6]
     g.set(15+sway,22,WHITE); g.set(15+sway,23,WHITE)
+    for i in range(3):
+        x=13+i*3; g.set(x,22,BTF_D)
     return g
 
-# --- SPIDER ---
+# --- 10. SPIDER: Round body, 8 long legs ---
 SF=(50,50,50,255); SF_L=(80,80,80,255); SF_D=(30,30,30,255)
 SS=(200,180,160,255); SS_D=(160,140,120,255); SE=(255,255,0,255); SC=(200,200,200,255)
 
 def spider_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body - round abdomen
+    # Round abdomen
     g.ellipse(15,16+bob,7,5,lambda x,y:SF)
-    # Cephalothorax
-    g.ellipse(15,12+bob,6,3,lambda x,y:SF_L)
-    # 8 legs
-    leg_pos = [(5,20),(8,20),(12,20),(15,20),(18,20),(22,20),(25,20),(28,20)]
-    for i,(lx,ly) in enumerate(leg_pos):
-        if i < 4: side = -1 if i%2==0 else 1
-        else: side = -1 if i%2==0 else 1
-        line(g,lx,ly,lx+side*3,ly+5,SF_D,1)
+    # Smaller cephalothorax
+    g.ellipse(15,12+bob,5,3,lambda x,y:SF_L)
+    # 8 LONG legs - completely unique
+    angles=[0,45,90,135,180,225,270,315]
+    for angle in angles:
+        rad=math.radians(angle); lx=15+math.cos(rad)*6; ly=12+bob+math.sin(rad)*6
+        line(g,int(lx),int(ly),int(lx+math.cos(rad)*8),int(ly+math.sin(rad)*8),SF_D,1)
     # Head
     hhx,hhy=15,11+hd+bob; g.ellipse(hhx,hhy,2,2,lambda x,y:SF_L)
     if eye=="open": g.set(hhx-1,hhy-1,SE); g.set(hhx+1,hhy-1,SE)
@@ -622,11 +678,11 @@ def spider_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
 def spider_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
     g.ellipse(cx,16+bob,7,5,lambda x,y:SF)
-    g.ellipse(cx,12+bob,6,3,lambda x,y:SF_L)
-    # Legs pointing out
-    for angle in range(0,360,45):
+    g.ellipse(cx,12+bob,5,3,lambda x,y:SF_L)
+    # 8 legs pointing out
+    for angle in [0,45,90,135,180,225,270,315]:
         rad=math.radians(angle); lx=cx+math.cos(rad)*6; ly=12+bob+math.sin(rad)*6
-        line(g,int(lx),int(ly),int(lx+math.cos(rad)*4),int(ly+math.sin(rad)*4),SF_D,1)
+        line(g,int(lx),int(ly),int(lx+math.cos(rad)*8),int(ly+math.sin(rad)*8),SF_D,1)
     hy=11+bob; g.ellipse(cx,hy,3,2,lambda x,y:SF_L)
     if eye=="open": g.set(14,hy,SE); g.set(17,hy,SE)
     else: g.rect(13,hy,14,hy,OUT); g.rect(17,hy,18,hy,OUT)
@@ -635,104 +691,106 @@ def spider_front(f=0,eye="open"):
 def spider_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
     g.ellipse(cx,16+bob,7,5,lambda x,y:SF)
-    g.ellipse(cx,12+bob,6,3,lambda x,y:SF_L)
-    for angle in range(0,360,45):
+    g.ellipse(cx,12+bob,5,3,lambda x,y:SF_L)
+    for angle in [0,45,90,135,180,225,270,315]:
         rad=math.radians(angle); lx=cx+math.cos(rad)*6; ly=12+bob+math.sin(rad)*6
-        line(g,int(lx),int(ly),int(lx+math.cos(rad)*4),int(ly+math.sin(rad)*4),SF_D,1)
+        line(g,int(lx),int(ly),int(lx+math.cos(rad)*8),int(ly+math.sin(rad)*8),SF_D,1)
     g.ellipse(cx,8+bob,3,2,lambda x,y:SF_L)
     return g
 
-# --- FROG ---
+# --- 11. FROG: Squat, bulging eyes, long legs ---
 FRG=(50,200,50,255); FRG_L=(80,220,80,255); FRG_D=(30,180,30,255)
 FS=(255,255,200,255); FS_D=(220,220,170,255); FRE=(255,255,255,255); FRN=(255,100,50,255)
 
 def frog_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body
-    g.ellipse(15,16+bob,8,6,lambda x,y:FRG)
-    # Head - big frog head
-    hhx,hhy=23+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:FRG_L)
-    # Eyes - bulging
+    # SQUAT round body
+    g.ellipse(15,17+bob,8,6,lambda x,y:FRG)
+    # LARGE head
+    hhx,hhy=22+hx,12+hd+bob; g.ellipse(hhx,hhy,6,5,lambda x,y:FRG_L)
+    # BULGING eyes - unique
     if eye=="open":
         g.rect(hhx+2,hhy-2,hhx+3,hhy-1,FRE)
         g.rect(hhx-1,hhy-2,hhx,hhy-1,FRE)
         g.set(hhx+2,hhy-2,BLACK); g.set(hhx-1,hhy-2,BLACK)
     else: g.rect(hhx-1,hhy-1,hhx+3,hhy-1,OUT)
-    # Mouth
     g.rect(hhx,hhy+1,hhx+2,hhy+2,FRN)
     if mouth: g.rect(hhx,hhy+3,hhx+2,hhy+3+mouth,(255,50,50,255))
-    # Legs
-    LX=(10,18,7,15)
+    # LONG back legs, SHORT front legs
+    LX=(12,18,8,14)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
-        g.rect(x,20+bob,x+2,b,FRG_D); g.rect(x-1,b,x+3,b,FS_D)
+        w=1 if i<2 else 2  # back legs thicker
+        g.rect(x,20+bob,x+w,b,FRG_D); g.rect(x-1,b,x+w+1,b,FS_D)
     return g
 
 def frog_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,8,6,lambda x,y:FRG)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:FRG_L)
+    g.ellipse(cx,17+bob,8,6,lambda x,y:FRG)
+    hy=11+bob; g.ellipse(cx,hy,7,5,lambda x,y:FRG_L)
     if eye=="open":
         g.rect(13,hy-2,14,hy-1,FRE); g.rect(17,hy-2,18,hy-1,FRE)
         g.set(13,hy-2,BLACK); g.set(17,hy-2,BLACK)
     else: g.rect(12,hy-1,14,hy-1,OUT); g.rect(17,hy-1,19,hy-1,OUT)
     g.rect(15,hy+2,16,hy+3,FRN)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,FRG_D); g.rect(x-1,b,x+3,b,FS_D)
+    for x,l in ((10,lifts[0]),(21,lifts[1])):
+        b=25-l; w=1 if x<15 else 2
+        g.rect(x,20,x+w,b,FRG_D); g.rect(x-1,b,x+w+1,b,FS_D)
     return g
 
 def frog_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,8+bob,5,4,lambda x,y:FRG_L)
-    g.ellipse(cx,16+bob,8,6,lambda x,y:FRG)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+2,b,FRG_D); g.rect(x-1,b,x+3,b,FS_D)
+    g.ellipse(cx,9+bob,6,4,lambda x,y:FRG_L)
+    g.ellipse(cx,17+bob,8,6,lambda x,y:FRG)
+    for x,l in ((10,lifts[0]),(21,lifts[1])):
+        b=25-l; w=1 if x<15 else 2
+        g.rect(x,20,x+w,b,FRG_D); g.rect(x-1,b,x+w+1,b,FS_D)
     sway=(0,1,1,0,-1,-1)[f%6]; g.rect(14+sway,24,16+sway,26,FRG_L)
     return g
 
-# --- DRAGON ---
+# --- 12. DRAGON: Long neck, wings, spiked tail ---
 DF=(200,50,50,255); DF_L=(230,80,80,255); DF_D=(140,20,20,255)
 DS=(255,255,200,255); DS_D=(220,220,170,255); DE=(255,255,0,255); DC=(255,255,200,255)
 
 def dragon_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
     # Body
-    g.ellipse(15,15+bob,10,6,lambda x,y:DF)
-    g.ellipse(15,14+bob,10,7,lambda x,y:DF_D)
-    # Spikes down back
-    for i in range(5): g.set(15+i,11+bob+i//2,DF_L)
-    # Head
-    hhx,hhy=24+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:DF_L)
-    g.rect(hhx+1,hhy-3,hhx+2,hhy-1,DF_L)  # horn
-    # Eye
+    g.ellipse(15,15+bob,10,5,lambda x,y:DF)
+    g.ellipse(15,14+bob,10,6,lambda x,y:DF_D)
+    # Spikes down back - unique
+    for i in range(6): g.set(14+i,11+bob+i//2,DF_L)
+    # LONG neck
+    line(g,24,13+bob,28,10+bob,DF_L,3)
+    # Head with horn
+    hhx,hhy=29+hx,10+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:DF_L)
+    g.rect(hhx+1,hhy-4,hhx+2,hhy-1,DF_L)  # horn
     if eye=="open": g.set(hhx+1,hhy-1,DE)
     else: g.rect(hhx+1,hhy-1,hhx+2,hhy-1,OUT)
-    # Snout
     for dx in range(-1,3): g.set(hhx+dx,hhy+1,DS); g.set(hhx+dx,hhy+2,DS)
     g.set(hhx+2,hhy+2,DE)
     # Wings
     g.rect(18,12+bob,24,15+bob,DS)
-    # Legs
+    # 4 legs
     LX=(9,18,6,15)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+2,b,DF_D); g.rect(x-1,b,x+3,b,DC)
-    # Tail with spike
-    line(g,5,15+bob,1,15+bob+8-tail,DF_D,2)
-    g.set(0,15+bob+6,DF_L)
+    # Spiked tail
+    line(g,3,15+bob,0,15+bob+8-tail,DF_D,2)
+    g.set(0,15+bob+6,DF_L); g.set(1,15+bob+4,DF_L)
     if mouth: g.rect(hhx,hhy+3,hhx+2,hhy+3+mouth,(255,100,0,255))
     return g
 
 def dragon_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,10,6,lambda x,y:DF)
-    for i in range(5): g.set(15+i,11+bob+i//2,DF_L)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:DF_L)
-    g.rect(15,hy-4,16,hy-1,DF_L)  # horn
+    g.ellipse(cx,15+bob,10,5,lambda x,y:DF)
+    for i in range(6): g.set(14+i,11+bob+i//2,DF_L)
+    hy=10+bob; g.ellipse(cx,hy,6,4,lambda x,y:DF_L)
+    g.rect(15,hy-5,16,hy-1,DF_L)
     if eye=="open": g.set(13,hy-1,DE); g.set(18,hy-1,DE)
     else: g.rect(12,hy-1,13,hy-1,OUT); g.rect(18,hy-1,19,hy-1,OUT)
     g.rect(15,hy+2,16,hy+3,DE)
-    g.rect(10,hy-2,12,hy+1,DS); g.rect(19,hy-2,21,hy+1,DS)  # wings
+    g.rect(10,hy-3,12,hy+1,DS); g.rect(19,hy-3,21,hy+1,DS)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+2,b,DF_D); g.rect(x-1,b,x+3,b,DC)
     return g
@@ -740,56 +798,52 @@ def dragon_front(f=0,eye="open"):
 def dragon_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
     g.ellipse(cx,8+bob,5,4,lambda x,y:DF_L)
-    g.ellipse(cx,15+bob,10,6,lambda x,y:DF)
-    for i in range(5): g.set(15+i,11+bob+i//2,DF_L)
+    g.ellipse(cx,15+bob,10,5,lambda x,y:DF)
+    for i in range(6): g.set(14+i,11+bob+i//2,DF_L)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+2,b,DF_D); g.rect(x-1,b,x+3,b,DC)
     sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,26,DF_D,2)
     g.set(15+sway,24,DF_L)
     return g
 
-# --- UNICORN ---
+# --- 13. UNICORN: Horse-like, horn, mane ---
 UF=(255,255,255,255); UFL=(255,255,255,255); UFD=(230,230,230,255)
 US=(255,200,220,255); US_D=(220,170,190,255); UE=(255,100,150,255); UN=(255,150,200,255)
 UC=(240,240,240,255)
 
 def unicorn_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    g.ellipse(15,15+bob,10,6,lambda x,y:UF)
-    g.ellipse(15,14+bob,10,7,lambda x,y:UFD)
+    g.ellipse(15,15+bob,11,5,lambda x,y:UF)
+    g.ellipse(15,14+bob,11,6,lambda x,y:UFD)
     # Mane
-    for i in range(4): g.set(18+i,11+bob+i,US)
-    # Head
-    hhx,hhy=24+hx,12+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:UFL)
-    # Horn
-    line(g,hhx+2,hhy-4,hhx+2,hhy-7,US,2)
-    g.set(hhx+2,hhy-7,UE)
-    # Ear
+    for i in range(5): g.set(17+i,11+bob+i,US)
+    # Head with horn
+    hhx,hhy=25+hx,11+hd+bob; g.ellipse(hhx,hhy,5,4,lambda x,y:UFL)
+    line(g,hhx+2,hhy-5,hhx+2,hhy-8,US,2)
+    g.set(hhx+2,hhy-8,UE)
     g.rect(hhx-2,hhy-5,hhx-1,hhy-2,US)
-    # Eye
     if eye=="open": g.set(hhx,hhy-1,UE)
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
-    # Snout
     for dx in range(-1,3): g.set(hhx+dx,hhy+1,US); g.set(hhx+dx,hhy+2,US)
     g.set(hhx+2,hhy+1,UN)
-    # Legs
-    LX=(9,18,6,15)
+    # 4 legs
+    LX=(8,19,5,16)
     for i,lx in enumerate(LX):
         x=lx; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+1,b,UFD); g.rect(x-1,b,x+2,b,UC)
-    # Tail
-    line(g,5,15+bob,1,15+bob+6-tail,UFD,2)
+    # Flowing tail
+    line(g,3,15+bob,0,15+bob+6-tail,UFD,2)
     g.set(0,15+bob+5,US)
     if mouth: g.rect(hhx,hhy+3,hhx+2,hhy+3+mouth,(255,150,200,255))
     return g
 
 def unicorn_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,15+bob,10,6,lambda x,y:UF)
-    for i in range(4): g.set(18+i,11+bob+i,US)
-    hy=10+bob; g.ellipse(cx,hy,6,5,lambda x,y:UFL)
-    line(g,15,hy-5,15,hy-8,US,2); g.set(15,hy-8,UE)  # horn
-    g.rect(10,hy-6,12,hy-2,US)  # mane
+    g.ellipse(cx,15+bob,11,5,lambda x,y:UF)
+    for i in range(5): g.set(17+i,11+bob+i,US)
+    hy=10+bob; g.ellipse(cx,hy,6,4,lambda x,y:UFL)
+    line(g,15,hy-6,15,hy-9,US,2); g.set(15,hy-9,UE)
+    g.rect(11,hy-7,12,hy-2,US)
     if eye=="open": g.set(13,hy,UE); g.set(18,hy,UE)
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
     g.rect(15,hy+2,16,hy+3,UN)
@@ -800,81 +854,81 @@ def unicorn_front(f=0,eye="open"):
 def unicorn_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
     g.ellipse(cx,8+bob,5,4,lambda x,y:UFL)
-    g.ellipse(cx,15+bob,10,6,lambda x,y:UF)
-    for i in range(4): g.set(18+i,11+bob+i,US)
+    g.ellipse(cx,15+bob,11,5,lambda x,y:UF)
+    for i in range(5): g.set(17+i,11+bob+i,US)
     for x,l in ((8,lifts[0]),(22,lifts[1])):
         b=25-l; g.rect(x,20,x+1,b,UFD); g.rect(x-1,b,x+2,b,UC)
     sway=(0,1,1,0,-1,-1)[f%6]; line(g,15,20+bob,15+sway,26,UFD,2)
     g.set(15+sway,24,US)
     return g
 
-# --- PENGUIN ---
+# --- 14. PENGUIN: Upright, 2 legs, flippers ---
 PF=(50,50,80,255); PF_L=(80,80,110,255); PF_D=(30,30,60,255)
 PS=(255,255,255,255); PS_D=(220,220,220,255); PE=(22,16,20,255); PN=(255,150,50,255)
 PC=(255,200,100,255)
 
 def penguin_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body
-    g.ellipse(15,16+bob,9,7,lambda x,y:PF)
-    # Belly
-    g.ellipse(15,17+bob,8,5,lambda x,y:PS)
+    # UPRIGHT body
+    g.ellipse(15,14+bob,8,8,lambda x,y:PF)
+    g.ellipse(15,15+bob,7,6,lambda x,y:PS)
     # Head
-    hhx,hhy=23+hx,13+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:PF_L)
+    hhx,hhy=15,8+hd+bob; g.ellipse(hhx,hhy,4,4,lambda x,y:PF_L)
     # Beak
     g.rect(hhx+2,hhy,hhx+4,hhy+2,PN)
-    # Eye
     if eye=="open": g.set(hhx,hhy-1,PE)
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
-    # Feet
-    LX=(10,18,7,15)
-    for i,lx in enumerate(LX):
-        x=lx; b=max(23+bob,25-L[i][1])
+    # 2 legs (penguins are bipedal)
+    LX=(12,18,0,0)  # only 2 legs visible
+    for i in range(2):
+        x=LX[i]; b=max(23+bob,25-L[i][1])
         g.rect(x,23+bob,x+2,b,PF_D); g.rect(x-1,b,x+3,b,PC)
     # Flippers
-    g.rect(20,14+bob,24,16+bob,PF_L)
-    g.rect(6,14+bob,10,16+bob,PF_L)
+    g.rect(20,13+bob,24,16+bob,PF_L)
+    g.rect(6,13+bob,10,16+bob,PF_L)
     if mouth: g.rect(hhx+3,hhy+2,hhx+4,hhy+2+mouth,(255,100,0,255))
     return g
 
 def penguin_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,9,7,lambda x,y:PF)
-    g.ellipse(cx,17+bob,8,5,lambda x,y:PS)
-    hy=11+bob; g.ellipse(cx,hy,5,4,lambda x,y:PF_L)
+    g.ellipse(cx,14+bob,8,8,lambda x,y:PF)
+    g.ellipse(cx,15+bob,7,6,lambda x,y:PS)
+    hy=9+bob; g.ellipse(cx,hy,5,4,lambda x,y:PF_L)
     if eye=="open": g.set(13,hy,PE); g.set(18,hy,PE)
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
     g.rect(15,hy+2,16,hy+4,PN)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,23,x+2,b,PF_D); g.rect(x-1,b,x+3,b,PC)
+    for x in [10,21]:
+        b=25-lifts[0] if x==10 else 25-lifts[1]
+        g.rect(x,23,x+2,b,PF_D); g.rect(x-1,b,x+3,b,PC)
     g.rect(10,hy-1,12,hy+1,PF_L); g.rect(19,hy-1,21,hy+1,PF_L)
     return g
 
 def penguin_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,8+bob,4,3,lambda x,y:PF_L)
-    g.ellipse(cx,16+bob,9,7,lambda x,y:PF)
-    g.ellipse(cx,17+bob,8,5,lambda x,y:PS)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,23,x+2,b,PF_D); g.rect(x-1,b,x+3,b,PC)
+    g.ellipse(cx,8+bob,5,4,lambda x,y:PF_L)
+    g.ellipse(cx,14+bob,8,8,lambda x,y:PF)
+    g.ellipse(cx,15+bob,7,6,lambda x,y:PS)
+    for x in [10,21]:
+        b=25-lifts[0] if x==10 else 25-lifts[1]
+        g.rect(x,23,x+2,b,PF_D); g.rect(x-1,b,x+3,b,PC)
     sway=(0,1,1,0,-1,-1)[f%6]; g.rect(14+sway,24,16+sway,26,PF_L)
     return g
 
-# --- OWL ---
+# --- 15. OWL: Round body, large head, 2 legs ---
 OF=(150,100,50,255); OF_L=(180,130,80,255); OF_D=(120,70,30,255)
 OS=(255,255,200,255); OS_D=(220,220,170,255); OE=(255,255,0,255); ON=(255,200,100,255)
 OC=(200,200,200,255)
 
 def owl_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body
+    # ROUND body
     g.ellipse(15,15+bob,9,7,lambda x,y:OF)
-    # Head - large
-    hhx,hhy=22+hx,11+hd+bob; g.ellipse(hhx,hhy,6,5,lambda x,y:OF_L)
-    # Tufts (ear-like feathers)
+    # LARGE head
+    hhx,hhy=21+hx,10+hd+bob; g.ellipse(hhx,hhy,7,6,lambda x,y:OF_L)
+    # Tufts
     g.rect(hhx-2,hhy-6,hhx-1,hhy-3,OF_L)
     g.rect(hhx+2,hhy-6,hhx+3,hhy-3,OF_L)
-    # Eyes - large
+    # LARGE eyes
     if eye=="open":
         g.rect(hhx,hhy-1,hhx+1,hhy+1,OE)
         g.rect(hhx+3,hhy-1,hhx+4,hhy+1,OE)
@@ -882,12 +936,12 @@ def owl_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     else: g.rect(hhx,hhy,hhx+4,hhy,OUT)
     # Beak
     g.rect(hhx+1,hhy+2,hhx+3,hhy+3,ON)
-    # Legs
-    LX=(10,18,7,15)
-    for i,lx in enumerate(LX):
-        x=lx; b=max(20+bob,25-L[i][1])
+    # 2 legs
+    LX=(12,18,0,0)
+    for i in range(2):
+        x=LX[i]; b=max(20+bob,25-L[i][1])
         g.rect(x,20+bob,x+1,b,OF_D); g.rect(x-1,b,x+2,b,OC)
-    # Tail - short
+    # Short tail
     g.rect(1,15+bob,4,15+bob+2,OF_D)
     if mouth: g.rect(hhx+2,hhy+3,hhx+3,hhy+3+mouth,(255,150,0,255))
     return g
@@ -895,85 +949,92 @@ def owl_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
 def owl_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
     g.ellipse(cx,15+bob,9,7,lambda x,y:OF)
-    hy=10+bob; g.ellipse(cx,hy,7,6,lambda x,y:OF_L)
+    hy=9+bob; g.ellipse(cx,hy,8,7,lambda x,y:OF_L)
     g.rect(10,hy-6,12,hy-3,OF_L); g.rect(19,hy-6,21,hy-3,OF_L)
     if eye=="open":
         g.rect(12,hy-1,14,hy+1,OE); g.rect(17,hy-1,19,hy+1,OE)
         g.set(12,hy,BLACK); g.set(17,hy,BLACK)
     else: g.rect(11,hy,14,hy,OUT); g.rect(17,hy,20,hy,OUT)
     g.rect(14,hy+2,17,hy+3,ON)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,OF_D); g.rect(x-1,b,x+2,b,OC)
+    for x in [11,20]:
+        b=25-lifts[0] if x==11 else 25-lifts[1]
+        g.rect(x,20,x+1,b,OF_D); g.rect(x-1,b,x+2,b,OC)
     return g
 
 def owl_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,8+bob,6,4,lambda x,y:OF_L)
+    g.ellipse(cx,8+bob,7,4,lambda x,y:OF_L)
     g.ellipse(cx,15+bob,9,7,lambda x,y:OF)
     g.rect(11,2+bob,12,5+bob,OF_L); g.rect(19,2+bob,20,5+bob,OF_L)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,OF_D); g.rect(x-1,b,x+2,b,OC)
+    for x in [11,20]:
+        b=25-lifts[0] if x==11 else 25-lifts[1]
+        g.rect(x,20,x+1,b,OF_D); g.rect(x-1,b,x+2,b,OC)
     sway=(0,1,1,0,-1,-1)[f%6]; g.rect(14+sway,24,16+sway,26,OF_L)
     return g
 
-# --- LADYBUG ---
+# --- 16. LADYBUG: Perfect circle, 6 legs, spots ---
 LFB=(255,50,50,255); LFB_L=(255,80,80,255); LFB_D=(230,30,30,255)
 LSB=(0,0,0,255); LEYE=(22,16,20,255)
 
 def ladybug_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Body - dome shaped
-    g.ellipse(15,16+bob,8,6,lambda x,y:LFB)
-    # Spots
+    # PERFECT circle body
+    g.ellipse(15,16+bob,8,7,lambda x,y:LFB)
+    # Spots - unique pattern
     g.rect(12,13+bob,14,14+bob,LSB); g.rect(16,13+bob,18,14+bob,LSB)
     g.rect(13,15+bob,14,16+bob,LSB); g.rect(17,15+bob,18,16+bob,LSB)
     g.rect(14,17+bob,16,18+bob,LSB)
-    # Head
+    # Small head
     hhx,hhy=22+hx,13+hd+bob; g.ellipse(hhx,hhy,3,3,lambda x,y:LFB_L)
-    # Eye
     if eye=="open": g.set(hhx,hhy-1,LEYE); g.set(hhx+1,hhy-1,LEYE)
     else: g.rect(hhx,hhy-1,hhx+1,hhy-1,OUT)
-    # Legs
-    LX=(10,18,7,15)
-    for i,lx in enumerate(LX):
-        x=lx; b=max(20+bob,25-L[i][1])
+    # 6 legs (3 visible)
+    for i in range(3):
+        x=10+i*3; b=max(20+bob,25-(i*2))
         g.rect(x,20+bob,x+1,b,LSB)
     return g
 
 def ladybug_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,8,6,lambda x,y:LFB)
+    g.ellipse(cx,16+bob,8,7,lambda x,y:LFB)
     g.rect(12,13+bob,14,14+bob,LSB); g.rect(16,13+bob,18,14+bob,LSB)
     g.rect(13,15+bob,14,16+bob,LSB); g.rect(17,15+bob,18,16+bob,LSB)
     g.rect(14,17+bob,16,18+bob,LSB)
-    hy=11+bob; g.ellipse(cx,hy,4,3,lambda x,y:LFB_L)
+    hy=12+bob; g.ellipse(cx,hy,4,3,lambda x,y:LFB_L)
     if eye=="open": g.set(14,hy,LEYE); g.set(17,hy,LEYE)
     else: g.rect(13,hy,14,hy,OUT); g.rect(17,hy,18,hy,OUT)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,LSB)
+    for i in range(3):
+        x=10+i*5; b=25-lifts[i*2] if i*2<6 else 25
+        g.rect(x,20,x+1,b,LSB)
     return g
 
 def ladybug_back(f=0):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]; lifts=[LIFT[(f+o)%6] for o in (0,3)]
-    g.ellipse(cx,16+bob,8,6,lambda x,y:LFB)
+    g.ellipse(cx,16+bob,8,7,lambda x,y:LFB)
     g.rect(12,13+bob,14,14+bob,LSB); g.rect(16,13+bob,18,14+bob,LSB)
     g.rect(13,15+bob,14,16+bob,LSB); g.rect(17,15+bob,18,16+bob,LSB)
     g.rect(14,17+bob,16,18+bob,LSB)
     g.ellipse(cx,8+bob,4,3,lambda x,y:LFB_L)
-    for x,l in ((8,lifts[0]),(22,lifts[1])):
-        b=25-l; g.rect(x,20,x+1,b,LSB)
+    for i in range(3):
+        x=10+i*5; b=25-lifts[i*2] if i*2<6 else 25
+        g.rect(x,20,x+1,b,LSB)
     return g
 
-# --- SNAKE ---
+# --- 17. SNAKE: S-curve, no legs, long tongue ---
 SF=(50,150,50,255); SF_L=(80,180,80,255); SF_D=(30,120,30,255)
 SS=(255,255,200,255); SS_D=(220,220,170,255); SE=(255,255,0,255); SN=(255,100,50,255)
 
 def snake_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     g=Grid(); L=[(0,0)]*4 if legs is None else legs
-    # Long snake body
+    # S-curve body - completely unique
     line(g,5,15+bob,28,15+bob,SF,3)
     line(g,5,15+bob+1,28,15+bob+1,SF_D,2)
     line(g,5,15+bob-1,28,15+bob-1,SF_L,2)
+    # Curve the body
+    for i in range(5):
+        y=15+bob+math.sin(i*0.5)*3
+        g.set(10+i,int(y),SF_D)
+        g.set(10+i,int(y)+1,SF_D)
     # Head
     hhx,hhy=28+hx,14+hd+bob; g.ellipse(hhx,hhy,4,3,lambda x,y:SF_L)
     # Tongue
@@ -983,20 +1044,20 @@ def snake_side(bob=0,legs=None,hd=0,hx=0,eye="open",mouth=0,tail=0,ears=0):
     # Eye
     if eye=="open": g.set(hhx+1,hhy-1,SE)
     else: g.rect(hhx+1,hhy-1,hhx+2,hhy-1,OUT)
-    # Tail
+    # Pointed tail
     line(g,4,15+bob,1,15+bob+3-tail,SF_D,2)
     return g
 
 def snake_front(f=0,eye="open"):
     g=Grid(); cx=15.5; bob=(0,0,-1,0,0,-1)[f%6]
-    # Body coil
+    # Coiled body
     g.ellipse(cx,15+bob,10,6,lambda x,y:SF)
     g.ellipse(cx,14+bob,10,7,lambda x,y:SF_D)
     hy=10+bob; g.ellipse(cx,hy,5,4,lambda x,y:SF_L)
     if eye=="open": g.set(13,hy,SE); g.set(18,hy,SE)
     else: g.rect(12,hy,13,hy,OUT); g.rect(18,hy,19,hy,OUT)
     g.rect(15,hy+2,16,hy+3,SN)
-    if f%2==0: g.set(16,hy+4,SE)  # tongue
+    if f%2==0: g.set(16,hy+4,SE)
     return g
 
 def snake_back(f=0):
@@ -1096,9 +1157,8 @@ def curl1(animal="armadillo"):
 
 def ball(rot=0.0, squish=0, snout=False, tailtip=False, animal="armadillo"):
     g=Grid(); cx,r=15.5,9; ry=r-squish; cy=25.5-ry; ca,sa=math.cos(rot),math.sin(rot)
-    # Use animal's colors
-    colors={"armadillo":(SHELL,SHELL_L,SHELL_M,SHELL_D,SKIN,SKIN_D,NOSE_A,CLAW_A),
-           "wolf":(WF,WFL,WFD,WF,WS,WS,WN,WC),"fox":(FF,FFL,FFD,FF,FW,FW,FN,FC),
+    colors={"armadillo":(SHELL,SHELL_L,SHELL_M,SHELL_D,SKIN_A,SKIN_D_A,NOSE_A,CLAW_A),
+           "wolf":(WF,WFL,WFD,WF,WS,WS,WN,WC),"fox":(FF,FFL,FF_D,FF,FW,FW,FN,FC),
            "cat":(CF,CFL,CFD,CF,CS,CS,CN,CC),"rabbit":(RF,RFL,RFD,RF,RI,RI,RN,RC),
            "fish":(FFISH,FFISH_L,FFISH_D,FFISH,FISH_WHITE,FISH_WHITE,FISH_WHITE,FFISH_D),
            "lizard":(LF,LFL,LF_D,LF,LS,LS_D,LE,LC),"bee":(BF,BFL,BFD,BF,BW,BW,BLACK,BC),
@@ -1164,7 +1224,6 @@ def build(name, idx=0, tilt=0, blink=False, animal="armadillo"):
 def render_accessory(g, accessory, animal="armadillo"):
     if accessory=="none": return
     ac=AP
-    # Position varies by animal
     hy=8
     if animal in ["fish","snake"]: hy=10
     elif animal in ["lizard","spider","frog","dragon","unicorn","penguin","owl"]: hy=9
@@ -1311,7 +1370,6 @@ class Pet:
 
     def begin_curl(self,then):
         self.set("curl_in",next_state=then); self.sleep_ptr=self.root.winfo_pointerxy()
-
     def begin_uncurl(self,then): self.set("curl_out",next_state=then)
     def nap(self):
         if self.state in ("idle","walk"): self.begin_curl("sleep")
