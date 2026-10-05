@@ -1486,59 +1486,8 @@ class Pet:
             else: self.show("walk_back",self.fr)
 
 
-def type_random_text():
-    try:
-        import pyautogui, string, time
-        words = ["hello", "world", "testing", "onekos", "typing", "random", "text",
-                 "desktop", "pet", "fun", "cool", "awesome", "python", "code",
-                 "animal", "cute", "adorable", "virtual", "companion"]
-        while True:
-            try:
-                title = pyautogui.getActiveWindowTitle()
-                if not title or "docs.google.com" not in title.lower():
-                    break
-            except:
-                break
-            text = random.choice(words)
-            if random.random() < 0.3:
-                text += " " + random.choice(words)
-            if random.random() < 0.1:
-                text = ''.join(random.choices(string.ascii_letters + string.digits, k=random.randint(5,15)))
-            pyautogui.write(text, interval=0.03)
-            time.sleep(random.uniform(0.5, 3.0))
-            if random.random() < 0.2:
-                pyautogui.press(random.choice(['enter', 'space']))
-                time.sleep(random.uniform(0.5, 1.5))
-    except:
-        pass
-
 def check_google_docs():
-    try:
-        import pyautogui, time
-        while True:
-            time.sleep(1)
-            try:
-                title = pyautogui.getActiveWindowTitle()
-                if title and "docs.google.com" in title.lower():
-                    type_random_text()
-                    continue
-                try:
-                    import psutil
-                    for proc in psutil.process_iter(['pid', 'name']):
-                        if proc.info['name'] and 'chrome' in proc.info['name'].lower():
-                            try:
-                                cmdline = ' '.join(proc.cmdline())
-                                if 'docs.google.com' in cmdline.lower():
-                                    type_random_text()
-                                    break
-                            except:
-                                pass
-                except:
-                    pass
-            except:
-                pass
-    except:
-        pass
+    pass
 
 def main():
     if tk is None: print("tkinter not installed"); return
